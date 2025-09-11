@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" href="/img/icon.png">
+    <link rel="shortcut icon" href="/img/icon.png">
+
+    <title>Capybara Solitaire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div class="game-container">
+        <div class="header">
+            <button onclick="toggleSound()" id="soundToggle">🔊</button>
+            <h1><img src="img/icon.png"> caCapybara Solitaire</h1>
+            <div class="score">
+            <span id="score">Points: 0</span> | 
+            <span id="moves">Moves: 0</span> | 
+            <span id="time">Time: 00:00</span>
+        </div>
+        </div>
+        
+        <div class="controls">
+            <button id="newGameButton" onclick="newGame()" disabled data-icon="🎮">
+                <span class="button-icon">🎮</span>
+                <span class="button-text">New Game</span>
+            </button>
+            
+            <button onclick="autoComplete()" data-icon="⚡">
+                <span class="button-icon">⚡</span>
+                <span class="button-text">Auto-Complete</span>
+            </button>
+            
+
+            <button onclick="resetImageProgress()" class="secondary" data-icon="🧩">
+                <span class="button-icon">🧩</span>
+                <span class="button-text">Restart Puzzles</span>
+            </button>
+
+            <button id="undoButton" onclick="undo()" data-icon="↶">
+                <span class="button-icon">↶</span>
+                <span class="button-text">Undo <span id="undoCountDisplay"></span></span>
+            </button>
+
+            <button id="adButton" style="display:none;" onclick="requestExtraUndo()" data-icon="📺">
+                <span class="button-icon">📺</span>
+                <span class="button-text">Watch Ad for an extra Undo</span>
+            </button>
+
+            <button onclick="simulateWin()" class="debug" style="display: none;">Simular Victoria</button>
+
+        </div><!-- End of controls -->
+
+        <div class="top-row">
+            <div class="card-pile stock-pile" id="stock" onclick="drawCards()"></div>
+            <div class="card-pile waste-pile" id="waste"></div>
+            <div></div>
+            <div class="card-pile foundation empty-foundation" id="foundation-0"></div>
+            <div class="card-pile foundation empty-foundation" id="foundation-1"></div>
+            <div class="card-pile foundation empty-foundation" id="foundation-2"></div>
+            <div class="card-pile foundation empty-foundation" id="foundation-3"></div>
+        </div>
+
+        <div class="game-board">
+            <div class="card-pile tableau" id="tableau-0"></div>
+            <div class="card-pile tableau" id="tableau-1"></div>
+            <div class="card-pile tableau" id="tableau-2"></div>
+            <div class="card-pile tableau" id="tableau-3"></div>
+            <div class="card-pile tableau" id="tableau-4"></div>
+            <div class="card-pile tableau" id="tableau-5"></div>
+            <div class="card-pile tableau" id="tableau-6"></div>
+        </div>
+
+        <div class="puzzle-section">
+        <h2>Season Puzzles</h2>
+        <p>Win games to get pieces of the puzzles.</p>
+        <div class="hidden-image-wrapper">
+           
+            <div class="hidden-image-container" id="first-image">
+                <img src="img/posters/poster-1.jpg" alt="Imagen Oculta 1">
+                <div class="image-overlay">
+                    <div class="image-panel" id="panel-1"><span>1</span></div>
+                    <div class="image-panel" id="panel-2"><span>2</span></div>
+                    <div class="image-panel" id="panel-3"><span>3</span></div>
+                    <div class="image-panel" id="panel-4"><span>4</span></div>
+                </div>
+            </div>
+            
+            <div class="hidden-image-container" id="second-image" style="display: none;">
+                <img src="img/posters/poster-2.jpg" alt="Imagen Oculta 2">
+                <div class="image-overlay">
+                    <div class="image-panel" id="panel-5"><span>5</span></div>
+                    <div class="image-panel" id="panel-6"><span>6</span></div>
+                    <div class="image-panel" id="panel-7"><span>7</span></div>
+                    <div class="image-panel" id="panel-8"><span>8</span></div>
+                </div>
+            </div> 
+            
+            <div class="hidden-image-container" id="third-image" style="display: none;">
+                <img src="img/posters/poster-3.jpg" alt="Imagen Oculta 2">
+                <div class="image-overlay">
+                    <div class="image-panel" id="panel-5"><span>5</span></div>
+                    <div class="image-panel" id="panel-6"><span>6</span></div>
+                    <div class="image-panel" id="panel-7"><span>7</span></div>
+                    <div class="image-panel" id="panel-8"><span>8</span></div>
+                </div>
+            </div>
+            <div class="hidden-image-container" id="fourth-image" style="display: none;">
+                <img src="img/posters/poster-4.jpg" alt="Imagen Oculta 2">
+                <div class="image-overlay">
+                    <div class="image-panel" id="panel-5"><span>5</span></div>
+                    <div class="image-panel" id="panel-6"><span>6</span></div>
+                    <div class="image-panel" id="panel-7"><span>7</span></div>
+                    <div class="image-panel" id="panel-8"><span>8</span></div>
+                </div>
+            </div>
+
+        
+        </div> <!-- End of hidden-image-wrapper -->
+        
+        </div> <!-- End of puzzle-section -->
+        </div> <!-- End of game-container -->
+
+    
+
+    <div class="win-overlay" id="winOverlay"></div>
+    <div class="win-message" id="winMessage">
+        <div id="winPuzzlePiece">
+        <img src="img/win.jpg">
+         <h3>Congratulations! </h3>
+        You have won and earned a piece of a puzzle!<br>
+        </div>
+        <div id="winSeason">
+        <img src="img/wintrophy.jpg">
+         <h3>Congratulations! </h3>
+        You have won and finished all the puzzles of this season!<br>
+        </div>
+        <button id="newGameButton" onclick="newGame()">Play again</button>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

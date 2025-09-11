@@ -1,0 +1,382 @@
+@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Poppins:wght@400;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  background: linear-gradient(to right, #FFC0CB, #ADD8E6, #FFE4E1);
+  min-height: 100vh;
+  padding: 20px;
+  user-select: none;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Mochiy Pop One", sans-serif;
+}
+h1 img{max-height: 100px; vertical-align: middle;}
+.game-container {
+  max-width: 1400px;
+  min-height: 80vh;
+
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+.header {
+  text-align: center;
+  color: white;
+  margin-bottom: 20px;
+  background: linear-gradient(to right, rgba(105, 90, 205, 0.4), rgba(105, 90, 205, 0.8));
+  border-radius: 20px;
+  width: 100%;
+  padding: 20px;
+  border:#fff 5px dashed;
+  position:relative
+}
+.header h1 {
+  color: rgb(255, 255, 255);
+}
+.controls {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+  margin-top: -35px;
+  position:relative;
+}
+
+button {
+  font-family: 'Poppins', Arial, sans-serif;
+    background: #fffbb9;
+    color: #4B0082;
+    border: 2px solid #FFC0CB;
+    padding: 12px 24px;
+    border-radius: 25px; 
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 
+        inset 0 2px 4px rgba(255, 255, 255, 0.6), 
+        0 4px 6px rgba(0, 0, 0, 0.1); 
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+}
+.button-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.button-text {
+    white-space: nowrap;
+}
+
+button:hover {
+    background: #FFC0CB; 
+    transform: translateY(-3px); 
+    box-shadow: 
+        inset 0 2px 4px rgba(255, 255, 255, 0.8),
+        0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+    transform: translateY(0); /* Vuelve a su posición original al hacer clic */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+button.secondary {
+background: #D8BFD8; /* Lila pastel al pasar el cursor */
+
+}
+
+button.secondary:hover {
+    background: #f5b3eb; /* Trigo (un amarillo pálido) */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+button.secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+button.debug {
+  background: #17a2b8;
+}
+button.debug:hover {
+  background: #138496;
+}
+button:disabled {
+  background: #ccc; /* A light gray background */
+  color: #666; /* A darker gray text color */
+  cursor: not-allowed; /* Change the cursor */
+  opacity: 0.7; /* Make it slightly transparent */
+  transform: none; /* Prevent the hover effect */
+  box-shadow: none; /* Remove any shadows */
+}
+#soundToggle{
+  position:absolute;
+  top:10px;
+  right: 10px;
+}
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(80px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+
+  transform-origin: top center;
+  transition: transform 0.3s ease;
+
+}
+.top-row {
+  display: grid;
+  grid-template-columns: minmax(80px, 1fr) minmax(80px, 1fr) 1fr repeat(
+      4,
+      minmax(80px, 1fr)
+    );
+  gap: 15px;
+  margin-bottom: 20px;
+
+  transform-origin: top center;
+  transition: transform 0.3s ease;
+}
+.card-pile {
+  min-height: 120px;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px;
+  cursor: pointer;
+}
+.foundation {
+  background: rgba(255, 255, 255, 0.3);
+}
+.tableau {
+  min-height: 200px;
+}
+.card {
+  width: 80px;
+  height: 110px;
+  border-radius: 8px;
+  border: 2px solid #333;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: absolute;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.5s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+  overflow: hidden;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: transparent; /* Makes the text (value/suit) invisible */
+
+  transition: all .2s;
+}
+.card-label {
+  position: absolute; /* Permite posicionar el elemento */
+  top: 0px; /* Margen desde la parte superior */
+  left: 0px; /* Margen desde la izquierda */
+  font-size: 14px;
+  font-weight: bold;
+  color: black; /* Color del texto, puedes elegir el que desees */
+  line-height: 1; /* Para evitar espacio extra entre el valor y el palo */
+  text-align: center;
+  pointer-events: none; /* Asegura que el clic en la tarjeta no sea bloqueado por el texto */
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); /* Opcional: para que se vea mejor sobre la imagen */
+
+  background: #ffffffd3;
+  padding: 3px 5px;
+  border-radius: 5px;
+}
+
+/* Puedes añadir un estilo para los palos rojos si lo deseas */
+.card.red .card-label {
+  color: red;
+}
+.card:hover {
+ transform: translateY(-5px); 
+  z-index: 100;
+}
+.card.red {
+  color: #d32f2f;
+}
+.card.black {
+  color: #333;
+}
+/* New CSS using a background image */
+.card.face-down {
+  background-image: url("img/cards/back.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid white;
+  color: transparent;
+}
+.card.selected {
+  border-color: #ffeb3b;
+  box-shadow: 0 0 20px rgba(255, 235, 59, 0.8);
+}
+
+.waste-pile{
+  background: rgba(0, 187, 255, 0.2);
+  border-style: solid;
+}
+.stock-pile {
+  background: rgba(0, 255, 170, 0.2);
+  border-style: solid;
+}
+.empty-foundation::before {
+  content: "♠♥♦♣";
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 20px;
+}
+.score {
+  text-align: center;
+  color: white;
+  font-size: 18px;
+  margin-top: 10px;
+  background: #d59bff99;
+  padding:10px;
+  border-radius: 15px;
+}
+.win-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fdfdfd;
+  color: rgb(162, 131, 209);
+  padding: 30px 50px;
+  border-radius: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  display: none;
+  z-index: 2000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.puzzle-section {
+  width: 100%;
+  text-align: center;
+  color: rgb(89, 89, 89);
+  margin-top: 30px;
+}
+.hidden-image-wrapper { 
+  display: flex; 
+  justify-content: center; 
+  flex-wrap: wrap; 
+  gap: 20px; 
+  margin-top: 25px;
+}
+.hidden-image-container {
+  position: relative;
+  max-width: 45%;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+.hidden-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.image-overlay {
+  font-family: "Mochiy Pop One", sans-serif;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.image-panel {
+  background: linear-gradient(to bottom, #B2EBF2, #E1BEE7, #FFAB91);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition:
+    opacity 0.8s ease-in-out,
+    transform 0.8s ease-in-out;
+  opacity: 1;
+  transform: scale(1);
+}
+.image-panel.revealed {
+  opacity: 0;
+  transform: scale(1.1);
+  pointer-events: none;
+}
+.win-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: none;
+}
+
+.scale-wrapper {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+@media (max-width: 768px) {
+.hidden-image-container {
+
+  max-width: 80%;
+
+}
+
+    .controls {
+        gap: 10px;
+    }
+
+    button {
+        padding: 12px 16px;
+        font-size: 12px;
+        min-width: 50px;
+        border-radius: 20px;
+    }
+
+    .button-text {
+        display: none; /* Hide text on mobile */
+    }
+
+    .button-icon {
+        font-size: 20px;
+    }
+
+}
