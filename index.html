@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" href="/img/icon.png">
+    <link rel="shortcut icon" href="/img/icon.png">
+
+    <title>Capybara Solitaire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="background00">
+
+    <!-- Splash screen (shows only on first load or page reload) -->
+        <div id="splash" class="splash-overlay" aria-hidden="true">
+            <div class="splash-content">
+                <img src="img/capybarasolitaire_logo.png" alt="Capybara Solitaire" class="splash-logo">
+                <div id="preloadStatus" style="margin:8px 0;font-family:sans-serif;font-size:14px;color:#fff;text-shadow:0 1px 2px #000;">Loading cuteness 0%</div>
+                <button id="splashStart" class="button" disabled>PLAY NOW</button>
+            </div>
+        </div>
+    
+<div class="game_cover"></div>
+
+    <div class="game-container">
+
+        <!-- Tutorial Hand Overlay -->
+<img id="tutorialHand" src="img/manita.svg" alt="Tutorial Hand" style="display:none; position:absolute; left:0; top:0; width:64px; height:64px; z-index:1000; pointer-events:none;" />
+
+<!-- Tutorial Instruction Box -->
+<div id="tutorialInstruction" style="display:none; position:absolute; right:2%; top:10%; left:auto; transform:none; background:rgba(255,255,255,0.95); color:#222; padding:16px 24px; border-radius:12px; font-size:18px; z-index:1001; box-shadow:0 2px 12px #0002; max-width:400px; text-align:left;">
+
+    
+</div>
+
+
+        <div class="controls">
+
+            <div class="dropdown">
+  <button class="dropdown-toggle" onclick="toggleMenu()" data-icon="☰">
+    <span class="button-icon">☰</span>
+  </button>
+  <div class="dropdown-menu" id="dropdownMenu">
+
+    <button id="newGameButton" onclick="newGame()" disabled data-icon="🎮">
+                <span class="button-icon">🎮</span>
+                <span class="button-text">New Game</span>
+            </button>
+
+            <button id="skinsButton" onclick="toggleModal('skins')" data-icon="🎨">
+                <span class="button-icon">🎨</span>
+                <span class="button-text">Skins</span>
+            </button>
+
+            <button id="prizesButton" onclick="toggleModal('dailyPrizes')" data-icon="🎁">
+                <span class="button-icon">🎁</span>
+                <span class="button-text">Daily prizes</span>
+            </button>
+
+            <button id="tutorialButton" onclick="startTutorial()" data-icon="👋">
+    <span class="button-icon">👋</span>
+    <span class="button-text">Tutorial</span>
+</button>
+
+    <button onclick="toggleSound()" id="soundToggle"><span class="button-icon">🔊</span>
+      <span class="button-text">Toggle sound</span></button>
+
+    <button onclick="resetImageProgress()" class="secondary" data-icon="🧩">
+                <span class="button-icon">🧩</span>
+                <span class="button-text">Restart Season Puzzles</span>
+            </button>
+
+    
+    <button onclick="toggleModal('help')" data-icon="❓">
+      <span class="button-icon">❓</span>
+      <span class="button-text">Help</span>
+    </button>
+
+    <button onclick="toggleModal('credits')" data-icon="💜">
+      <span class="button-icon">💜</span>
+      <span class="button-text">Credits</span>
+    </button>
+
+
+  </div>
+</div>
+
+            
+            
+            <button onclick="autoComplete()" data-icon="⚡">
+                <span class="button-icon">⚡</span>
+            </button>
+            
+
+            
+
+            <button id="undoButton" onclick="undo()" data-icon="↶">
+                <span class="button-icon">↶</span>
+                <span class="button-text"><span id="undoCountDisplay"></span></span>
+            </button>
+
+            <div class="score">
+            <span id="score">⭐: 0</span> | 
+            <span id="moves">🖐️: 0</span> | 
+            <span id="time">⏳ 00:00</span>
+        </div>
+        
+
+        </div><!-- End of controls -->
+
+        <div class="top-row">
+            <div class="card-pile stock-pile" id="stock"></div>
+            <div class="card-pile waste-pile" id="waste"></div>
+            <div></div>
+            <div class="card-pile foundation empty-foundation" id="foundation-0"></div>
+            <div class="card-pile foundation empty-foundation" id="foundation-1"></div>
+            <div class="card-pile foundation empty-foundation" id="foundation-2"></div>
+            <div class="card-pile foundation empty-foundation" id="foundation-3"></div>
+        </div>
+        <div class="spacer"></div>
+
+        <div class="game-board">
+            <div class="card-pile tableau" id="tableau-0"></div>
+            <div class="card-pile tableau" id="tableau-1"></div>
+            <div class="card-pile tableau" id="tableau-2"></div>
+            <div class="card-pile tableau" id="tableau-3"></div>
+            <div class="card-pile tableau" id="tableau-4"></div>
+            <div class="card-pile tableau" id="tableau-5"></div>
+            <div class="card-pile tableau" id="tableau-6"></div>
+        </div>
+        <div class="spacer"></div>
+
+        <div class="puzzle-section">
+        <h2>Season Puzzles</h2>
+        <p>Win games to get pieces of the puzzles.</p>
+        <div class="hidden-image-wrapper">
+           
+            <div class="hidden-image-container" id="first-image">
+                <img src="img/posters/poster-1.jpg" alt="Imagen Oculta 1">
+                <div class="image-overlay">
+                    <div class="image-panel" id="panel-1"><span>1</span></div>
+                    <div class="image-panel" id="panel-2"><span>2</span></div>
+                    <div class="image-panel" id="panel-3"><span>3</span></div>
+                    <div class="image-panel" id="panel-4"><span>4</span></div>
+                </div>
+            </div>
+            
+            <div class="hidden-image-container" id="second-image" style="display: none;">
+                <img src="img/posters/poster-2.jpg" alt="Imagen Oculta 2">
+                <div class="image-overlay">
+                    <div class="image-panel" id="panel-5"><span>5</span></div>
+                    <div class="image-panel" id="panel-6"><span>6</span></div>
+                    <div class="image-panel" id="panel-7"><span>7</span></div>
+                    <div class="image-panel" id="panel-8"><span>8</span></div>
+                </div>
+            </div> 
+            
+            <div class="hidden-image-container" id="third-image" style="display: none;">
+                <img src="img/posters/poster-3.jpg" alt="Imagen Oculta 2">
+                <div class="image-overlay">
+                    <div class="image-panel" id="panel-5"><span>5</span></div>
+                    <div class="image-panel" id="panel-6"><span>6</span></div>
+                    <div class="image-panel" id="panel-7"><span>7</span></div>
+                    <div class="image-panel" id="panel-8"><span>8</span></div>
+                </div>
+            </div>
+            <div class="hidden-image-container" id="fourth-image" style="display: none;">
+                <img src="img/posters/poster-4.jpg" alt="Imagen Oculta 2">
+                <div class="image-overlay">
+                    <div class="image-panel" id="panel-5"><span>5</span></div>
+                    <div class="image-panel" id="panel-6"><span>6</span></div>
+                    <div class="image-panel" id="panel-7"><span>7</span></div>
+                    <div class="image-panel" id="panel-8"><span>8</span></div>
+                </div>
+            </div>
+
+        
+        </div> <!-- End of hidden-image-wrapper -->
+        
+        </div> <!-- End of puzzle-section -->
+        </div> <!-- End of game-container -->
+
+
+    <div class="win-overlay" id="winOverlay"></div>
+    <div class="win-message" id="winMessage">
+        <div id="winPuzzlePiece">
+        <img src="img/win.jpg">
+         <h3>Congratulations! </h3>
+        You have won and earned a piece of a puzzle!<br>
+        </div>
+        <div id="winSeason">
+        <img src="img/wintrophy.jpg">
+         <h3>Congratulations! </h3>
+        You have won and finished all the puzzles of this season!<br>
+        </div>
+        <button id="newGameButton" onclick="newGame()">Play again</button>
+    </div>
+
+    <div id="overlay"  class="overlay">
+
+
+    
+
+    <div id="help">
+    <img src="img/capybarasolitaire_logo.png" alt="Capybara Solitaire Logo" class="logo">
+        <h2 style="text-align: center;">📚 Playing Guide 📚</h2>
+    <p>The goal of the game is to move all cards to the foundations, organized by suit in ascending order (from Ace to King).</p>
+    
+    <h3>How to Play:</h3>
+    <ul>
+        <li>Click on a card to select it, then click on the spot where you want to move it.</li>
+        <li>You can place cards on top of another card if they are alternating colors and in descending order.</li>
+        <li>The Ace must be placed first in the foundation for each suit.</li>
+        <li>Empty spaces on the tableau can only be filled with a King or a pile starting with a King.</li>
+    </ul>
+    
+    <h3>Tips:</h3>
+    <ul>
+        <li>Try to uncover hidden cards by moving the cards that block them.</li>
+        <li>Prioritize moving cards to the foundations whenever possible.</li>
+        <li>Don't rush; plan your moves to avoid blocking the game.</li>
+    </ul>
+
+    <p style="text-align: center; font-style: italic; margin-top: 10px;">Have fun and try to win!</p>
+</div>
+
+<div id="credits">
+    <img src="img/capybarasolitaire_logo.png" alt="Capybara Solitaire Logo" class="logo">
+    <h2 style="text-align: center;">💜 Credits 💜</h2>
+    <p style="text-align: center;">Developed by Fabi Yamada</p>
+    <!-- <p style="text-align: center;">Music by Kevin MacLeod (incompetech.com)</p> -->
+    <p style="text-align: center;">Special thanks to all beta testers and supporters! <br />
+        Dedicated to my beloved daughters</p>
+    <p style="text-align: center; font-style: italic; margin-top: 10px;">Thank you for playing Capybara Solitaire!</p>     
+    
+     <h4>You can message me for bugs/comments or just be friends on social media:</h4>
+     <p>
+<a href="https://www.instagram.com/fabiyamada_art/" target="_blank" rel="noopener noreferrer">Instagram</a>
+<a href="https://www.threads.com/@fabiyamada_art" target="_blank" rel="noopener noreferrer">Threads</a>
+<a href="https://www.facebook.com/fabiyamada.art" target="_blank" rel="noopener noreferrer">Facebook</a>
+<a href="https://x.com/fabiyamada_art" target="_blank" rel="noopener noreferrer">X / Twitter</a>
+<a href="https://www.linkedin.com/in/fabiola-a-yamada/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+<a href="https://www.youtube.com/channel/UC2utK5AeqEvFm_PZuh15RrA" target="_blank" rel="noopener noreferrer">YouTube</a>
+<a href="https://github.com/fabiyamada" target="_blank" rel="noopener noreferrer">GitHub</a>
+
+
+    </p>
+    </div><!-- End of credits -->
+
+    <div id="skins">
+  
+    <h2 style="text-align: center;">🎨 Skins 🎨</h2>
+    <p style="text-align: center;">Customize your deck with unique skins!</p>
+        <h4>Back of the cards:</h4>
+
+        <div class="skin-options" id="selectBackSkin">
+        <div class="skin-option">
+            <img src="img/cards/back/back01.jpg" alt="Default Back" class="skin-image selected" data-skin="back01" onclick="selectBackSkin('back01')">
+        </div>   
+
+        <div id="back02" class="skin-option locked">
+            <img src="img/cards/back/back02.jpg" alt="Night Shill" class="skin-image" data-skin="back02" onclick="selectBackSkin('back02')">         
+        </div> 
+
+        <div id="back03" class="skin-option locked">
+            <img src="img/cards/back/back03.jpg" alt="Psychedelic" class="skin-image" data-skin="back03" onclick="selectBackSkin('back03')">         
+        </div> 
+
+        <div id="back04" class="skin-option locked">
+            <img src="img/cards/back/back04.jpg" alt="Autumn" class="skin-image" data-skin="back04" onclick="selectBackSkin('back04')">         
+        </div> 
+
+
+        </div><!-- End of skin-options -->   
+<h4>Front of the cards:</h4>
+        <div class="skin-options" id="selectFrontSkin">
+        <div class="skin-option" id="deck01">
+            <img src="img/cards/front-default-preview.png" alt="Default Front" class="skin-image selected" onclick="selectFrontSkin('front_default')">
+        </div>
+        <div class="skin-option locked" id="deck02">
+            <img src="img/cards/front-autumn-preview.png" alt="Autumn Front" class="skin-image" onclick="selectFrontSkin('front_autumn')">
+        </div>
+
+    </div><!-- End of skin-options -->
+    <h4>Backgrounds:</h4>
+    <div class="skin-options" id="selectBg">
+        <div class="skin-option">
+            <img src="img/backgrounds/background00-preview.jpg" alt="Default Background" class="skin-image selected" onclick="selectBg('background00')">
+        </div>
+        <div class="skin-option locked">
+            <img src="img/backgrounds/background01-preview.jpg" alt="Forest Background" class="skin-image" onclick="selectBg('background01')">
+        </div>
+        <div class="skin-option locked">
+            <img src="img/backgrounds/background02-preview.jpg" alt="Desert Background" class="skin-image" onclick="selectBg('background02')">
+        </div>
+        <div class="skin-option locked">
+            <img src="img/backgrounds/background03-preview.jpg" alt="Desert Background" class="skin-image" onclick="selectBg('background03')">
+        </div>
+        </div><!-- End of skin-options -->
+    </div><!-- End of skins -->
+
+    <div id="dailyPrizes">
+        <button class="closePrizes" aria-label="Close" onclick="toggleModal('dailyPrizes', false)" >✕</button>
+        <h2 style="text-align: center;">🎁 Daily Prizes 🎁</h2>
+        <div class="capyprize"></div>
+        <div class="claim-area">
+        <button id="claimPrizeButton" class="button" onclick="claimDailyPrize()">Claim Today's Prize</button>
+        <p style="text-align: center;">Come back every day to claim a free prize!</p>
+        </div>
+
+        <div class="prize-history">
+            <h3>Your Prize History:</h3>
+            <ul id="prizeHistoryList">
+                <li class="claimed">
+                    <img src="img/daily_prize.png">
+                    <span>Claimed!</span>
+                </li>
+                <li class="locked">
+                    <img src="img/daily_prize.png">
+                    <span>Day 2!</span>
+                </li>
+                <li class="locked">
+                    <img src="img/daily_prize.png">
+                    <span>Day 3!</span>
+                </li>
+                <li class="locked">
+                    <img src="img/daily_prize.png">
+                    <span>Day 4!</span>
+                </li>
+                <li class="locked">
+                    <img src="img/daily_prize.png">
+                    <span>Day 5!</span>
+                </li>
+                <li class="locked">
+                    <img src="img/daily_prize.png">
+                    <span>Day 6!</span>
+                </li>
+                <li class="locked">
+                    <img src="img/daily_prize.png">
+                    <span>Day 7!</span>
+                </li>
+                <li class="locked">
+                    <img src="img/daily_prize.png">
+                    <span>Day 8!</span>
+                </li>
+                <li class="locked">
+                    <img src="img/daily_prize.png">
+                    <span>Day 9!</span>
+                </li>
+                <li class="locked">
+                    <img src="img/daily_prize.png">
+                    <span>Day 10!</span>
+                </li>
+            </ul>
+
+        <div id="prizeMessage" style="text-align: center; margin-top: 10px;"></div>
+
+    </div>
+
+    </div> <!-- End of overlay -->
+    
+    <script src="script.js"></script>
+
+</body>
+
+
+
+</html>
